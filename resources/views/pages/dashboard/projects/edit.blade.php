@@ -69,6 +69,40 @@
                 @enderror
             </div>
 
+            <div class="mb-3">
+
+                <label for="technologies" class="form-label">Insert The Languages</label>
+                <select multiple name="technologies[]" id="technologies" class="form-select @error('technologies') is-invalid @enderror">
+
+                    <option value="">Select One Or More</option>
+
+                    @forelse ( $technologies as $technology)
+
+                        @if ($errors->any())
+
+                        <option value="{{$technology->id}}" {{in_array($technology->id, old('technologies', [])) ? 'selected' : ''}}>{{$technology->name}}</option>
+
+                        @else
+
+                        <option value="{{$technology->id}}" {{$project->technologies->contains($technology->id) ? 'selected' : ''}}>{{$technology->name}}</option>
+
+                        @endif
+
+                    @empty
+
+                        <option value="">There are no technologies</option>
+
+                    @endforelse
+
+                </select>
+                @error('technologies->name')
+                    <div class="alert alert-danger mt-1">
+                        {{ $message }}
+                    </div>
+                @enderror
+            </div>
+
+
             <button type="submit" class="btn btn-primary d-block ms-auto">EDIT</button>
         </form>
 

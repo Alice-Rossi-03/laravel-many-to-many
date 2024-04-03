@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
+use App\Models\Technology;
 use App\Models\Type;
 use Illuminate\Support\Facades\Storage;
 
@@ -27,8 +28,9 @@ class ProjectController extends Controller
      */
     public function create()
     {
+        $technologies = Technology::all();
         $types = Type::all();
-        return view('pages.dashboard.projects.create', compact('types'));
+        return view('pages.dashboard.projects.create', compact('types','technologies'));
     }
 
     /**
@@ -46,6 +48,11 @@ class ProjectController extends Controller
         }
 
         $new_project = Project::create($validated_data);
+
+        if ($request->has('technologies')){
+            $new_project->technologies()->attach($request->technologies);
+        }
+
         return redirect()->route('dashboard.projects.index');
     }
 
@@ -63,7 +70,8 @@ class ProjectController extends Controller
     public function edit(Project $project)
     {
         $types = Type::all();
-        return view('pages.dashboard.projects.edit', compact('project', 'types'));
+        $technologies = Technology::all();
+        return view('pages.dashboard.projects.edit', compact('project','types','technologies'));
     }
 
     /**
@@ -86,6 +94,11 @@ class ProjectController extends Controller
         }
 
         $project->update($validated_data);
+
+        if ($request->has('technologies')){
+            $project->technologies()->sync($request->technologies);
+        }
+
         return redirect()->route('dashboard.projects.index');
     }
 
@@ -94,6 +107,9 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+
+        $project->technologies()->sync([]);
+        
         if($project->cover){
             Storage::delete($project->cover);
         }
