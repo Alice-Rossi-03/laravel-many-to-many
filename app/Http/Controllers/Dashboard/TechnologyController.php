@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Requests\StoreTechnologyRequest;
 use App\Http\Requests\UpdateTechnologyRequest;
 use App\Models\Technology;
-use App\Http\Controllers\Controller; 
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Controller;
 
 class TechnologyController extends Controller
 {
@@ -14,7 +15,8 @@ class TechnologyController extends Controller
      */
     public function index()
     {
-        //
+        $technologies = Technology::all();
+        return view('pages.dashboard.technologies.index', compact('technologies'));
     }
 
     /**
@@ -22,7 +24,7 @@ class TechnologyController extends Controller
      */
     public function create()
     {
-        //
+        return view('pages.dashboard.technologies.create');
     }
 
     /**
@@ -30,7 +32,11 @@ class TechnologyController extends Controller
      */
     public function store(StoreTechnologyRequest $request)
     {
-        //
+        $validated_data = $request->validated();
+        $slug = Technology::generateSlug($request->name);
+        $validated_data['slug'] = $slug;
+        $new_tech = Technology::create($validated_data);
+        return redirect()->route('dashboard.technologies.index');
     }
 
     /**
@@ -38,7 +44,7 @@ class TechnologyController extends Controller
      */
     public function show(Technology $technology)
     {
-        //
+        return view('pages.dashboard.technologies.show', compact('technology'));
     }
 
     /**
@@ -46,7 +52,7 @@ class TechnologyController extends Controller
      */
     public function edit(Technology $technology)
     {
-        //
+        return view('pages.dashboard.technologies.edit', compact('technology'));
     }
 
     /**
@@ -54,7 +60,11 @@ class TechnologyController extends Controller
      */
     public function update(UpdateTechnologyRequest $request, Technology $technology)
     {
-        //
+        $validated_data = $request->validated();
+        $slug = Technology::generateSlug($request->name);
+        $validated_data['slug'] = $slug;
+        $technology->update($validated_data);
+        return redirect()->route('dashboard.technologies.index');
     }
 
     /**
@@ -62,6 +72,7 @@ class TechnologyController extends Controller
      */
     public function destroy(Technology $technology)
     {
-        //
+        $technology->delete();
+        return redirect()->route('dashboard.technologies.index');
     }
 }

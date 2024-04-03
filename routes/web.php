@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dashboard\ProjectController;
+use App\Http\Controllers\Dashboard\TechnologyController;
 use App\Http\Controllers\Dashboard\TypeController;
 // use App\Http\Controllers\TypeController;
 use App\Models\Type;
@@ -40,6 +41,10 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
 
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function(){
     Route::resource('types', TypeController::class)->parameters(['types'=>'type:slug']);
+});
+
+Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function(){
+    Route::resource('technologies', TechnologyController::class)->parameters(['technologies'=>'technology:slug']);
 });
 
 require __DIR__.'/auth.php';
